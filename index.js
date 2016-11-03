@@ -5,7 +5,7 @@ if (!process.env.token) {
     process.exit(1);
 }
 
-var Botkit = require('Botkit');
+var Botkit = require('botkit');
 
 var controller = Botkit.slackbot({
     debug: false,
@@ -30,7 +30,7 @@ controller.hears('\\d+[Dd]\\d*',
             var pip = '';
             pip = Math.floor(Math.random() * faces) + 1
             sum = sum + pip;
-            pipsList.push(pip);
+            pipsList.push(piphttps);
         }
 
         bot.reply(message,String(sum) + ' [' + pipsList.toString() + ']');
