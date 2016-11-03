@@ -30,7 +30,7 @@ controller.hears('\\d+[Dd]\\d*',
             var pip = '';
             pip = Math.floor(Math.random() * faces) + 1
             sum = sum + pip;
-            pipsList.push(piphttps);
+            pipsList.push(pip);
         }
 
         bot.reply(message,String(sum) + ' [' + pipsList.toString() + ']');
