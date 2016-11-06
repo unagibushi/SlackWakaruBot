@@ -9,6 +9,7 @@
   "author": "unagibushi",
   "license": "MIT",
   "dependencies": {
-    "botkit": "^0.4.0"
+    "botkit": "^0.4.0",
+    "cron": "^1.1.1"
   }
 }
