@@ -25,7 +25,7 @@ var bot = controller.spawn({
             var leftDays = 23 - day;
             if (leftDays === 0) {
                 text = '毎月23日は23の日です。'
-            } else if (leftDays <= 6 ) {
+            } else if (leftDays <= 6) {
                 text = '23の日まで後' + leftDays + '日です。'
             } else if ((day - 23) % 7 === 0) {
                 text = '23の日まで後' + (leftDays / 7) + '週間です。'
@@ -44,14 +44,23 @@ var bot = controller.spawn({
 });
 
 // ダイス
-controller.hears('\\d+[Dd]\\d*',
+controller.hears('\\d+[DdPp]\\d*',
     'ambient',
     function(bot, message) {
 
-        var matches = message.text.match(/(\d+)[Dd](\d+)/i);
+        var matches = message.text.match(/(\d+)([DdPp])(\d*)/i);
         var dices = Number(matches[1]);
-        var faces = Number(matches[2]);
-
+        var diceType = matches[2];
+        var faces = Number(matches[3]);
+        if (faces === 0) {
+            if (diceType === 'D' || diceType === 'd') {
+                // ダイスの場合
+                faces = 6;
+            } else {
+                // ポテトの場合
+                faces = 23;
+            }
+        }
         var sum = 0;
         var pipsList = [];
         for (var i = 0; i < dices; i++) {
