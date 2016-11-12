@@ -10,6 +10,7 @@ var CronJob = require('cron').CronJob;
 var controller = Botkit.slackbot({
     debug: false,
 });
+var client = require('cheerio-httpcli');
 
 var bot = controller.spawn({
     token: process.env.token
@@ -72,4 +73,18 @@ controller.hears('\\d+[DdPp]\\d*',
 
         bot.reply(message, String(sum) + ' [' + pipsList.toString() + ']');
 
+    });
+
+// わからなくしてやるbotに投稿する
+controller.hears('わからなくしてやれ',
+    'direct_mention',
+    function(bot, message) {
+        client.fetch(process.env.wakaranakushiteyaruURL, function(err, $, res) {
+            if (err) {
+                console.log(err);
+                bot.reply(message, 'わからなくできませんでした');
+            } else {
+                bot.reply(message, 'わからなくしました');
+            }
+        });
     });
