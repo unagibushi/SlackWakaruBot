@@ -84,7 +84,8 @@ controller.hears('わからなくしてやれ',
                 console.log(err);
                 bot.reply(message, 'わからなくできませんでした');
             } else {
-                bot.reply(message, 'わからなくしました');
+                var text = $('a').eq(5).text();
+                bot.reply(message, 'わからなくしました\n' + text);
             }
         });
     });
