@@ -26,9 +26,9 @@ var bot = controller.spawn({
             var leftDays = 23 - day;
             if (leftDays === 0) {
                 text = '毎月23日は23の日です。'
-            } else if (leftDays <= 6) {
+            } else if (leftDays > 0 && leftDays <= 6) {
                 text = '23の日まで後' + leftDays + '日です。'
-            } else if ((day - 23) % 7 === 0) {
+            } else if (leftDays > 0 && (day - 23) % 7 === 0) {
                 text = '23の日まで後' + (leftDays / 7) + '週間です。'
             }
 
