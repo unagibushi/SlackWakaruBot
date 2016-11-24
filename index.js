@@ -52,8 +52,9 @@ controller.hears('\\d+[DdPp]\\d*',
         var matches = message.text.match(/(\d+)([DdPp])(\d*)/i);
         var dices = Number(matches[1]);
         var diceType = matches[2];
-        var faces = Number(matches[3]);
-        if (faces === 0) {
+        var strFaces = matches[3];
+        var faces = Number(strFaces);
+        if (strFaces === '') {
             if (diceType === 'D' || diceType === 'd') {
                 // ダイスの場合
                 faces = 6;
@@ -61,6 +62,9 @@ controller.hears('\\d+[DdPp]\\d*',
                 // ポテトの場合
                 faces = 23;
             }
+        } else if (strFaces = '0') {
+            bot.reply(message, 'ダイスを振れなくて面目ない。0面だけに。');
+            return;
         }
         var sum = 0;
         var pipsList = [];
