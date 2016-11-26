@@ -107,7 +107,7 @@ controller.hears('わからなくしてやれ',
 controller.hears('^わかる[?？]',
     'direct_mention',
     function(bot, message) {
-        var matches = message.text.match(/^わかる[?？][\s　]+(.*)/);
+        var matches = message.text.match(/^わかる[?？]\s+(.*)/);
         var tweet = matches[1];
         if (tweet === '') {
             bot.reply('わかろうとする内容まで入力して下さい');
@@ -125,6 +125,39 @@ controller.hears('^わかる[?？]',
             } else {
                 console.log(err);
                 bot.reply(message, 'わかりませんでした');
+            }
+        })
+    })
+
+// Twitterで検索する
+controller.hears('^ワカリサーチ',
+    'direct_mention',
+    function(bot, message) {
+        var matches = message.text.match(/^ワカリサーチ\s+(.*)/);
+        if (!matches) {
+            bot.reply(message, 'ワカリサーチ対象を入力して下さい');
+            return;
+        }
+        var query = matches[1];
+
+        T.get('search/tweets', {
+            q: query,
+            count: 5
+        }, function(err, data, response) {
+            if (!err && data.statuses.length !== 0) {
+                var tweetURLs = '';
+                data.statuses.forEach(function(status) {
+                    var id = status.id_str;
+                    var screenName = status.user.screen_name;
+                    var tweetURL = 'https://twitter.com/' + screenName + '/status/' + id;
+                    tweetURLs = tweetURLs + tweetURL + '\n';
+                })
+                bot.reply(message, 'ワカリサーチ結果:mag_right:\n' + tweetURLs);
+            } else if (data.statuses.length === 0) {
+                bot.reply(message, 'ワカリサーチ結果:mag_right:\n該当なし');
+            } else {
+                console.log(err);
+                bot.reply(message, 'ワカリサーチ失敗');
             }
         })
     })
