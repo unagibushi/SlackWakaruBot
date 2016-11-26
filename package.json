@@ -11,7 +11,8 @@
   "dependencies": {
     "botkit": "^0.4.0",
     "cheerio-httpcli": "^0.6.9",
-    "cron": "^1.1.1"
+    "cron": "^1.1.1",
+    "twit": "^2.2.5"
   },
   "devDependencies": {
     "dotenv": "^2.0.0",

@@ -5,13 +5,22 @@ if (!process.env.WAKARU_SLACK_TOKEN) {
     process.exit(1);
 }
 
+// モジュールの読み込み
 var Botkit = require('botkit');
 var CronJob = require('cron').CronJob;
 var controller = Botkit.slackbot({
     debug: false,
 });
 var client = require('cheerio-httpcli');
+var Twit = require('twit');
+var T = new Twit({
+    consumer_key: process.env.I_KNOW_BOT_TWITTER_KEY,
+    consumer_secret: process.env.I_KNOW_BOT_TWITTER_SECRET,
+    access_token: process.env.I_KNOW_BOT_TWITTER_TOKEN,
+    access_token_secret: process.env.I_KNOW_BOT_TWITTER_TOKEN_SECRET
+})
 
+// botをSlackに接続する処理
 var bot = controller.spawn({
     token: process.env.WAKARU_SLACK_TOKEN
 }).startRTM(function(err, bot, payload) {
@@ -93,3 +102,29 @@ controller.hears('わからなくしてやれ',
             }
         });
     });
+
+// Twitterに投稿する
+controller.hears('^わかる[?？]',
+    'direct_mention',
+    function(bot, message) {
+        var matches = message.text.match(/^わかる[?？][\s　]+(.*)/);
+        var tweet = matches[1];
+        if (tweet === '') {
+            bot.reply('わかろうとする内容まで入力して下さい');
+            return;
+        }
+        T.post('statuses/update', {
+            status: tweet
+        }, function(err, data, response) {
+            if (!err) {
+                console.log(data);
+                var id = data.id_str;
+                var screenName = data.user.screen_name;
+                var tweetURL = 'https://twitter.com/' + screenName + '/status/' + id;
+                bot.reply(message, 'わかる\n' + tweetURL);
+            } else {
+                console.log(err);
+                bot.reply(message, 'わかりませんでした');
+            }
+        })
+    })
