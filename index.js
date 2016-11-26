@@ -1,6 +1,6 @@
 'use strict'
 
-if (!process.env.token) {
+if (!process.env.WAKARU_SLACK_TOKEN) {
     console.log('Error: Specify token in environment');
     process.exit(1);
 }
@@ -13,7 +13,7 @@ var controller = Botkit.slackbot({
 var client = require('cheerio-httpcli');
 
 var bot = controller.spawn({
-    token: process.env.token
+    token: process.env.WAKARU_SLACK_TOKEN
 }).startRTM(function(err, bot, payload) {
 
     // 23の日をお知らせする処理
@@ -83,7 +83,7 @@ controller.hears('\\d+[DdPp]\\d*',
 controller.hears('わからなくしてやれ',
     'direct_mention',
     function(bot, message) {
-        client.fetch(process.env.wakaranakushiteyaruURL, function(err, $, res) {
+        client.fetch(process.env.WAKARANAKUSHITEYARU_URL, function(err, $, res) {
             if (err) {
                 console.log(err);
                 bot.reply(message, 'わからなくできませんでした');
