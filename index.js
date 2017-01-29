@@ -58,14 +58,16 @@ var bot = controller.spawn({
         onTick: function() {
             getDailyRanking().then(function(result) {
                 bot.say({
-                    channel: 'general',
+                    channel: 'twitter_bot',
                     text: result,
                     username: 'wakaru',
                     icon_url: ''
                 });
             });
-        }
-    })
+        },
+        start: true,
+        timeZone: 'Asia/Tokyo'
+    });
 });
 
 // ダイス
