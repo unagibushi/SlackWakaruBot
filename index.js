@@ -9,7 +9,7 @@ if (!process.env.WAKARU_SLACK_TOKEN) {
 var Botkit = require('botkit');
 var CronJob = require('cron').CronJob;
 var controller = Botkit.slackbot({
-    debug: false,
+    debug: true,
 });
 var client = require('cheerio-httpcli');
 var Twit = require('twit');
@@ -127,7 +127,7 @@ controller.hears('^わかる[?？]',
                 bot.reply(message, 'わかりませんでした');
             }
         })
-    })
+    });
 
 // Twitterで検索する
 controller.hears('^ワカリサーチ',
@@ -160,4 +160,80 @@ controller.hears('^ワカリサーチ',
                 bot.reply(message, 'ワカリサーチ失敗');
             }
         })
-    })
+    });
+
+controller.hears('^ワカリランキング',
+    'direct_mention',
+    function(bot, message) {
+        getDailyRanking().then(function(result) {
+            bot.reply(message, result);
+        });
+    });
+
+// 最近１日間の理解ツイート人気ランキングを取得する
+function getDailyRanking() {
+    // 検索条件の準備
+    var query = 'from:I_know_bot';
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var day = now.getDate();
+    var yesterday = year + '-' + month + '-' + (day - 1);
+
+    return T.get('search/tweets', {
+            q: query,
+            result_type: 'mixed',
+            since: yesterday
+        })
+        .then(function(response) {
+            if (response.data.statuses.length !== 0) {
+                // 検索結果をファボ数、リツイート数でソート
+                response.data.statuses.sort(function(a, b) {
+                    if (a.favorite_count > b.favorite_count ||
+                        a.favorite_count === b.favorite_count &&
+                        a.retweet_count > b.retweet_count) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+
+                // 検索結果を整形
+                var result = ':confetti_ball: *最近１日間の理解ツイート人気ランキング*\n';
+                result = result + '|rank|tweet|favourite|retweet|URL|\n';
+                result = result + '-----------------------------\n';
+                var rank = 1;
+                response.data.statuses.forEach(function(status) {
+                    var id = status.id_str;
+                    var screenName = status.user.screen_name;
+                    var tweetURL = 'https://twitter.com/' + screenName + '/status/' + id;
+                    var favouriteCount = status.favorite_count;
+                    var retweetCount = status.retweet_count
+                    result = result + '|' +
+                        fillBlanks(rank, 3) + '|' +
+                        status.text.replace(/(\n|\r)/g, '').substring(0, 20) + '|' +
+                        fillBlanks(favouriteCount, 6) + '|' +
+                        fillBlanks(retweetCount, 6) + '|' +
+                        tweetURL + '|\n';
+                    rank = rank + 1;
+                });
+                return result;
+                console.log(result);
+
+            } else if (data.statuses.length === 0) {
+                console.log('ワカリサーチ結果:mag_right:\n該当なし');
+            }
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+}
+
+function fillBlanks(number, digit) {
+    var strNumber = String(number);
+    var result = strNumber;
+    for (var i = 0; i < digit - strNumber.length; i++) {
+        result = ' ' + result;
+    }
+    return result;
+}
