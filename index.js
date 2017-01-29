@@ -9,7 +9,7 @@ if (!process.env.WAKARU_SLACK_TOKEN) {
 var Botkit = require('botkit');
 var CronJob = require('cron').CronJob;
 var controller = Botkit.slackbot({
-    debug: true,
+    debug: false,
 });
 var client = require('cheerio-httpcli');
 var Twit = require('twit');
@@ -51,6 +51,21 @@ var bot = controller.spawn({
         start: true,
         timeZone: 'Asia/Tokyo'
     });
+
+    // ツイート人気ランキング定期表示処理
+    new CronJob({
+        cronTime: '0 23 * * *',
+        onTick: function() {
+            getDailyRanking().then(function(result) {
+                bot.say({
+                    channel: 'general',
+                    text: result,
+                    username: 'wakaru',
+                    icon_url: ''
+                });
+            });
+        }
+    })
 });
 
 // ダイス
