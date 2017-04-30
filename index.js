@@ -71,7 +71,7 @@ var bot = controller.spawn({
 });
 
 // ダイス
-controller.hears('\\d+[DdPp]\\d*',
+controller.hears('^\\s*\\d+[DdPp]\\d*',
     'ambient',
     function(bot, message) {
 
@@ -88,7 +88,7 @@ controller.hears('\\d+[DdPp]\\d*',
                 // ポテトの場合
                 faces = 23;
             }
-        } else if (strFaces = '0') {
+        } else if (strFaces === '0') {
             bot.reply(message, 'ダイスを振れなくて面目ない。0面だけに。');
             return;
         }
