@@ -216,9 +216,8 @@ function getDailyRanking() {
                 });
 
                 // 検索結果を整形
-                var result = ':confetti_ball: *最近１日間の理解ツイート人気ランキング*\n';
-                result = result + '|rank|tweet|favourite|retweet|URL|\n';
-                result = result + '-----------------------------\n';
+                var result = ':confetti_ball: *最近１日間の理解ツイート人気ランキング*\n\n:crown:';
+
                 var rank = 1;
                 response.data.statuses.forEach(function(status) {
                     var id = status.id_str;
@@ -226,12 +225,9 @@ function getDailyRanking() {
                     var tweetURL = 'https://twitter.com/' + screenName + '/status/' + id;
                     var favouriteCount = status.favorite_count;
                     var retweetCount = status.retweet_count
-                    result = result + '|' +
-                        fillBlanks(rank, 3) + '|' +
-                        status.text.replace(/(\n|\r)/g, '').substring(0, 20) + '|' +
-                        fillBlanks(favouriteCount, 6) + '|' +
-                        fillBlanks(retweetCount, 6) + '|' +
-                        tweetURL + '|\n';
+                    result = result + '*' + rank + '位：*    ' + 'favourite: ' + favouriteCount + '    ' + 'retweet: ' + retweetCount + '\n'
+                        + status.text.replace(/^/gm, '> ') + '\n'
+                        + tweetURL + '\n\n';
                     rank = rank + 1;
                 });
                 return result;
